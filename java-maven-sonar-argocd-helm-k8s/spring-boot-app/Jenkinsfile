@@ -2,7 +2,7 @@ pipeline {
   agent any
 
   environment {
-    SONARQUBE_TOKEN = credentials('sonarqube-token')    // Your SonarQube token credential ID
+    SONARQUBE_TOKEN = credentials('sonarqube')    // Your SonarQube token credential ID
     DOCKERHUB_CREDS = credentials('docker-cred')        // Your Docker Hub credentials ID
     GITHUB_TOKEN = credentials('github')                 // Your GitHub token credential ID
     SONAR_HOST_URL = 'http://44.210.144.176:9000'       // Your SonarQube server URL
