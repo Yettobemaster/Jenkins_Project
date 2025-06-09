@@ -21,12 +21,34 @@ pipeline {
           sh '''
             mvn clean verify sonar:sonar \
               -Dsonar.projectKey=com.abhishek:spring-boot-demo \
-              -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.token=${SONARQUBE_TOKEN}
+              -Dsonar.host.url=$SONAR_HOST_URL \
+              -Dsonar.token=$SONARQUBE_TOKEN
           '''
         }
       }
     }
 
     stage('Build and Push Docker Image') {
-      ste
+      steps {
+        dir('java-maven-sonar-argocd-helm-k8s/spring-boot-app') {
+          script {
+            def imageName = "abhishekf5/ultimate-cicd:${BUILD_NUMBER}"
+            sh "docker build -t ${imageName} ."
+            docker.withRegistry('https://index.docker.io/v1/', 'docker-cred') {
+              docker.image(imageName).push()
+            }
+          }
+        }
+      }
+    }
+  }
+
+  post {
+    success {
+      echo '✅ Pipeline completed successfully!'
+    }
+    failure {
+      echo '❌ Pipeline failed. Please check the logs.'
+    }
+  }
+}
